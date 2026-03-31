@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Fechamento de Caixa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 30px;
+            color: #222;
+        }
+
+        .acoes {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .acoes button,
+        .acoes a {
+            display: inline-block;
+            margin: 0 6px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            background: #7B1E3A;
+            color: #fff;
+        }
+
+        .acoes a {
+            background: #6b7280;
+        }
+
+        .pagina {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .titulo {
+            font-size: 30px;
+            font-weight: 900;
+            color: #7B1E3A;
+            margin-bottom: 6px;
+        }
+
+        .subtitulo {
+            font-size: 15px;
+            color: #666;
+        }
+
+        .empresa {
+            text-align: right;
+            font-size: 16px;
+            font-weight: 700;
+            color: #444;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .box {
+            border-top: 5px solid #7B1E3A;
+            background: #fafafa;
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .box .label {
+            font-size: 13px;
+            color: #777;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .box .valor {
+            font-size: 28px;
+            font-weight: 900;
+            margin-top: 10px;
+            color: #111;
+        }
+
+        .verde { border-top-color: #16a34a; }
+        .azul { border-top-color: #2563eb; }
+        .laranja { border-top-color: #d97706; }
+        .vermelho { border-top-color: #dc2626; }
+
+        .resumo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: #fafafa;
+            border-radius: 14px;
+            padding: 22px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #7B1E3A;
+            font-size: 24px;
+        }
+
+        .linha {
+            margin-bottom: 12px;
+            font-size: 17px;
+        }
+
+        .destaque {
+            font-weight: 800;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+            }
+
+            .acoes {
+                display: none;
+            }
+
+            .pagina {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: 100%;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="acoes">
+        <button onclick="window.print()">Imprimir / Salvar PDF</button>
+        <a href="/caixa-diario/{{ caixa.id }}">Voltar</a>
+    </div>
+
+    <div class="pagina">
+        <div class="topo">
+            <div>
+                <div class="titulo">Relatório de Fechamento de Caixa</div>
+                <div class="subtitulo">Comprovante detalhado do caixa do dia</div>
+            </div>
+
+            <div class="empresa">
+                Frigomag<br>
+                {{ caixa.data.strftime("%d/%m/%Y") if caixa.data else "-" }}
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="box">
+                <div class="label">Status</div>
+                <div class="valor">{{ caixa.status|upper }}</div>
+            </div>
+
+            <div class="box azul">
+                <div class="label">Abertura</div>
+                <div class="valor">R$ {{ "%.2f"|format(caixa.valor_abertura or 0) }}</div>
+            </div>
+
+            <div class="box verde">
+                <div class="label">Fechamento</div>
+                <div class="valor">R$ {{ "%.2f"|format(caixa.valor_fechamento or 0) }}</div>
+            </div>
+
+            <div class="box {% if (caixa.diferenca or 0) < 0 %}vermelho{% else %}laranja{% endif %}">
+                <div class="label">Diferença</div>
+                <div class="valor">R$ {{ "%.2f"|format(caixa.diferenca or 0) }}</div>
+            </div>
+        </div>
+
+        <div class="resumo">
+            <div class="card">
+                <h3>Resumo Financeiro</h3>
+
+                <div class="linha"><span class="destaque">Data:</span> {{ caixa.data.strftime("%d/%m/%Y") if caixa.data else "-" }}</div>
+                <div class="linha"><span class="destaque">Valor de abertura:</span> R$ {{ "%.2f"|format(caixa.valor_abertura or 0) }}</div>
+                <div class="linha"><span class="destaque">Valor de fechamento:</span> R$ {{ "%.2f"|format(caixa.valor_fechamento or 0) }}</div>
+                <div class="linha"><span class="destaque">Total em dinheiro:</span> R$ {{ "%.2f"|format(caixa.total_dinheiro or 0) }}</div>
+                <div class="linha"><span class="destaque">Total de vendas:</span> R$ {{ "%.2f"|format(caixa.total_vendas or 0) }}</div>
+                <div class="linha"><span class="destaque">Diferença final:</span> R$ {{ "%.2f"|format(caixa.diferenca or 0) }}</div>
+            </div>
+
+            <div class="card">
+                <h3>Conferência</h3>
+
+                <div class="linha">• Abertura registrada com valor inicial.</div>
+                <div class="linha">• Fechamento comparado com o dinheiro esperado.</div>
+                <div class="linha">• Diferença positiva indica sobra.</div>
+                <div class="linha">• Diferença negativa indica falta.</div>
+                <div class="linha">• Documento para conferência interna.</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

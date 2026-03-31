@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Produto{% endblock %}
+
+{% block content %}
+
+<div class="card" style="padding: 24px 26px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;">
+        <div>
+            <h1 class="page-title" style="font-size:32px; margin:0 0 6px 0;">Editar Produto</h1>
+            <p class="page-subtitle" style="font-size:16px; margin:0;">
+                Atualize as informações do produto.
+            </p>
+        </div>
+
+        <a href="/produtos/" class="btn" style="background:#6b7280;">Voltar</a>
+    </div>
+</div>
+
+<div class="card" style="padding:26px;">
+    <form method="POST">
+
+        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:20px;">
+
+            <div>
+                <label><strong>Nome</strong></label>
+                <input type="text" name="nome" value="{{ produto.nome }}" required>
+            </div>
+
+            <div>
+                <label><strong>Código</strong></label>
+                <input type="text" name="codigo" value="{{ produto.codigo or '' }}">
+            </div>
+
+            <div>
+                <label><strong>Tipo</strong></label>
+                <select name="tipo">
+                    <option value="kg" {% if produto.tipo == "kg" %}selected{% endif %}>Kg</option>
+                    <option value="unidade" {% if produto.tipo == "unidade" %}selected{% endif %}>Unidade</option>
+                </select>
+            </div>
+
+            <div>
+                <label><strong>Preço</strong></label>
+                <input type="number" step="0.01" name="preco" value="{{ produto.preco }}" required>
+            </div>
+
+            <div>
+                <label><strong>Estoque</strong></label>
+                <input type="number" step="0.01" name="estoque" value="{{ produto.estoque or 0 }}">
+            </div>
+
+        </div>
+
+        <div style="margin-top:20px;">
+            <button class="btn" style="font-size:18px; padding:12px 20px;">
+                Salvar Alterações
+            </button>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

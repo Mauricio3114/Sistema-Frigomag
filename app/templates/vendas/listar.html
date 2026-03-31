@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Vendas{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <h1 class="page-title">Vendas Realizadas</h1>
+    <p class="page-subtitle">Histórico das vendas do sistema.</p>
+
+    <div style="margin-top: 20px; margin-bottom: 15px;">
+        <a href="/vendas/" class="btn">+ Nova Venda</a>
+    </div>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Total</th>
+            <th>Pagamento</th>
+            <th>Data</th>
+            <th>Ação</th>
+        </tr>
+
+        {% for venda in vendas %}
+        <tr>
+            <td>{{ venda.id }}</td>
+            <td>R$ {{ "%.2f"|format(venda.total) }}</td>
+            <td>{{ venda.forma_pagamento or "-" }}</td>
+            <td>{{ venda.criado_em.strftime("%d/%m/%Y %H:%M") if venda.criado_em else "-" }}</td>
+            <td>
+                <a href="/vendas/{{ venda.id }}" class="btn" style="padding: 8px 12px;">
+                    Ver Detalhes
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

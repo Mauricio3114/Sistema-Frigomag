@@ -1,0 +1,313 @@
+{% extends "base_caixa.html" %}
+
+{% block content %}
+
+<div class="card" style="padding: 14px 20px; margin-bottom: 15px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;">
+        <div>
+            <span style="font-size:16px; color:#666;">Status do caixa</span><br>
+            <span style="font-size:24px; font-weight:900; color:#16a34a;">CAIXA ABERTO</span>
+        </div>
+
+        <a href="/caixa-diario/fechar" class="btn" style="background:#dc2626; font-size:18px; padding:12px 20px;">
+            Fechar Caixa
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <form method="POST" id="form-venda">
+        <input type="hidden" name="acao" value="add">
+
+        <div style="display:grid; grid-template-columns: 2.4fr 1fr auto; gap:16px; align-items:end;">
+            <div>
+                <label style="font-size:22px; font-weight:bold; color:#7B1E3A;">Código / Etiqueta</label>
+                <input
+                    type="text"
+                    name="codigo"
+                    id="codigo"
+                    placeholder="Bipe o código aqui"
+                    autofocus
+                    autocomplete="off"
+                    style="font-size:30px; padding:16px 18px; font-weight:bold; border:2px solid #c08497;"
+                >
+            </div>
+
+            <div>
+                <label style="font-size:22px; font-weight:bold; color:#7B1E3A;">Qtd / Peso</label>
+                <input
+                    type="number"
+                    step="0.001"
+                    name="quantidade"
+                    id="quantidade"
+                    value="1"
+                    style="font-size:30px; padding:16px 18px; font-weight:bold; border:2px solid #c08497;"
+                >
+            </div>
+
+            <button type="submit" class="btn" style="height:68px; width:86px; font-size:30px; border-radius:14px;">
+                +
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;">
+        <h2 style="font-size:24px; margin:0; color:#7B1E3A;">Itens da Venda</h2>
+        <div style="font-size:18px; color:#666;">
+            Itens no carrinho: <strong>{{ carrinho|length }}</strong>
+        </div>
+    </div>
+
+    <table>
+        <tr>
+            <th>Produto</th>
+            <th>Qtd</th>
+            <th>Preço</th>
+            <th>Subtotal</th>
+            <th style="width:80px;"></th>
+        </tr>
+
+        {% for item in carrinho %}
+        <tr {% if loop.last %}style="background:#faf5f7;"{% endif %}>
+            <td style="font-weight:700;">{{ item.nome }}</td>
+            <td>{{ item.quantidade }}</td>
+            <td>R$ {{ "%.2f"|format(item.preco) }}</td>
+            <td style="font-weight:700;">R$ {{ "%.2f"|format(item.subtotal) }}</td>
+            <td>
+                <form method="POST">
+                    <input type="hidden" name="acao" value="remover">
+                    <input type="hidden" name="index" value="{{ loop.index0 }}">
+                    <button type="submit" class="btn" style="background:#dc2626; padding:8px 12px;">X</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:36px; align-items:start;">
+
+        <div>
+            <div style="font-size:24px; font-weight:900; color:#444; margin-bottom:14px;">
+                PAGAMENTO
+            </div>
+
+            <div style="display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px;">
+                <button type="button" class="btn-pagamento" onclick="setPagamento('dinheiro', this)">
+                    💵 Dinheiro
+                </button>
+
+                <button type="button" class="btn-pagamento" onclick="setPagamento('pix', this)">
+                    📱 Pix
+                </button>
+
+                <button type="button" class="btn-pagamento" onclick="abrirCartao(this)">
+                    💳 Cartão
+                </button>
+            </div>
+
+            <div id="subcartao" style="display:none; margin-top:10px; margin-bottom:18px;">
+                <div style="font-size:18px; font-weight:800; color:#555; margin-bottom:10px;">
+                    Tipo do cartão
+                </div>
+
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <button type="button" class="btn-pagamento subcartao-btn" onclick="setPagamento('debito', this)">
+                        Débito
+                    </button>
+
+                    <button type="button" class="btn-pagamento subcartao-btn" onclick="setPagamento('credito', this)">
+                        Crédito
+                    </button>
+                </div>
+            </div>
+
+            <input type="hidden" name="forma_pagamento" id="forma_pagamento" form="form-finalizar">
+
+            <div id="bloco-recebido" style="display:none; max-width: 360px;">
+                <div style="font-size: 20px; font-weight: 900; color:#444; margin-bottom: 8px;">
+                    RECEBIDO
+                </div>
+
+                <input
+                    type="number"
+                    step="0.01"
+                    id="recebido"
+                    style="font-size:28px; padding:18px; width:100%; border: 2px solid #c08497; border-radius: 14px;"
+                >
+            </div>
+
+            <div style="margin-top: 24px; display:flex; gap:16px; flex-wrap:wrap;">
+                <form method="POST" id="form-finalizar">
+                    <input type="hidden" name="acao" value="finalizar">
+                    <button class="btn" style="padding:16px 34px; font-size:22px;">
+                        Finalizar Venda
+                    </button>
+                </form>
+
+                <form method="POST">
+                    <input type="hidden" name="acao" value="limpar">
+                    <button class="btn" style="background:#6b7280; padding:16px 28px; font-size:22px;">
+                        Cancelar Venda
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; align-items:flex-end; text-align:right;">
+            <div style="margin-bottom: 24px;">
+                <div style="font-size: 24px; font-weight: 900; color:#444;">
+                    TOTAL DA VENDA
+                </div>
+                <div style="font-size: 72px; font-weight: 900; color:#7B1E3A; line-height:1.1; margin-top: 8px;">
+                    R$ {{ "%.2f"|format(total) }}
+                </div>
+            </div>
+
+            <div>
+                <div style="font-size: 24px; font-weight: 900; color:#444;">
+                    TROCO
+                </div>
+                <div id="troco" style="font-size: 62px; font-weight: 900; color:#166534; line-height:1.1; margin-top: 8px;">
+                    R$ 0.00
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const codigoInput = document.getElementById("codigo");
+    const recebidoInput = document.getElementById("recebido");
+    const trocoDiv = document.getElementById("troco");
+    const formVenda = document.getElementById("form-venda");
+    const blocoRecebido = document.getElementById("bloco-recebido");
+    const subcartao = document.getElementById("subcartao");
+    const formaPagamentoInput = document.getElementById("forma_pagamento");
+
+    function manterFocoCodigo() {
+        if (codigoInput) {
+            codigoInput.focus();
+            codigoInput.select();
+        }
+    }
+
+    function tocarBeep() {
+        const audio = new Audio("data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTAAAAEAAP//AAD//wAA//8AAP//AAD//wAA");
+        audio.play().catch(() => {});
+    }
+
+    function atualizarTroco() {
+        if (!recebidoInput || !trocoDiv) return;
+
+        let total = {{ total }};
+        let recebido = parseFloat(recebidoInput.value || 0);
+        let troco = recebido - total;
+
+        if (troco < 0) troco = 0;
+
+        trocoDiv.innerText = "R$ " + troco.toFixed(2);
+    }
+
+    function limparSelecaoBotoes() {
+        document.querySelectorAll(".btn-pagamento").forEach(btn => {
+            btn.classList.remove("ativo");
+        });
+    }
+
+    function abrirCartao(botao) {
+        if (formaPagamentoInput) {
+            formaPagamentoInput.value = "";
+        }
+
+        limparSelecaoBotoes();
+
+        if (botao) {
+            botao.classList.add("ativo");
+        }
+
+        if (subcartao) {
+            subcartao.style.display = "block";
+        }
+
+        if (blocoRecebido) {
+            blocoRecebido.style.display = "none";
+        }
+
+        if (recebidoInput) {
+            recebidoInput.value = "";
+        }
+
+        if (trocoDiv) {
+            trocoDiv.innerText = "R$ 0.00";
+        }
+    }
+
+    function setPagamento(tipo, botao) {
+        if (formaPagamentoInput) {
+            formaPagamentoInput.value = tipo;
+        }
+
+        limparSelecaoBotoes();
+
+        if (botao) {
+            botao.classList.add("ativo");
+        }
+
+        if (tipo === "dinheiro") {
+            if (subcartao) subcartao.style.display = "none";
+            if (blocoRecebido) blocoRecebido.style.display = "block";
+            atualizarTroco();
+        } else if (tipo === "pix") {
+            if (subcartao) subcartao.style.display = "none";
+            if (blocoRecebido) blocoRecebido.style.display = "none";
+            if (recebidoInput) recebidoInput.value = "";
+            if (trocoDiv) trocoDiv.innerText = "R$ 0.00";
+        } else if (tipo === "debito" || tipo === "credito") {
+            if (subcartao) subcartao.style.display = "block";
+            if (blocoRecebido) blocoRecebido.style.display = "none";
+            if (recebidoInput) recebidoInput.value = "";
+            if (trocoDiv) trocoDiv.innerText = "R$ 0.00";
+        }
+    }
+
+    let timerLeitura = null;
+
+    if (codigoInput && formVenda) {
+        codigoInput.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                formVenda.submit();
+            }
+        });
+
+        codigoInput.addEventListener("input", function() {
+            clearTimeout(timerLeitura);
+
+            timerLeitura = setTimeout(() => {
+                if (codigoInput.value.trim().length >= 5) {
+                    formVenda.submit();
+                }
+            }, 300);
+        });
+    }
+
+    if (recebidoInput) {
+        recebidoInput.addEventListener("input", atualizarTroco);
+    }
+
+    window.onload = () => {
+        manterFocoCodigo();
+
+        const itensCarrinho = {{ carrinho|length }};
+        if (itensCarrinho > 0) {
+            tocarBeep();
+        }
+    };
+</script>
+
+{% endblock %}

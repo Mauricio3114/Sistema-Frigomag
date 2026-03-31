@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Abrir Caixa{% endblock %}
+
+{% block content %}
+
+<div class="card" style="padding: 24px 26px;">
+    <h1 class="page-title" style="font-size:32px; margin:0 0 6px 0;">Abrir Caixa</h1>
+    <p class="page-subtitle" style="font-size:16px; margin:0;">
+        Informe o valor inicial disponível no caixa.
+    </p>
+</div>
+
+<div class="card" style="padding:26px;">
+    <form method="POST" style="max-width:420px;">
+        <label style="font-weight:700;">Valor de Abertura</label>
+        <input type="number" step="0.01" name="valor_abertura" required style="margin-top:8px;">
+
+        <div style="margin-top:20px;">
+            <button type="submit" class="btn">Confirmar Abertura</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

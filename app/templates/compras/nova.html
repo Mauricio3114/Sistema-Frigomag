@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Compra{% endblock %}
+
+{% block content %}
+
+<div class="card" style="padding: 24px 26px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;">
+        <div>
+            <h1 class="page-title" style="font-size:32px; margin:0 0 6px 0;">Nova Compra</h1>
+            <p class="page-subtitle" style="font-size:16px; margin:0;">
+                Lance a entrada de mercadoria no estoque.
+            </p>
+        </div>
+
+        <a href="/compras/" class="btn" style="background:#6b7280;">Voltar</a>
+    </div>
+</div>
+
+<div class="card" style="padding: 26px;">
+    <form method="POST">
+        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:20px;">
+
+            <div>
+                <label style="font-weight:700;">Fornecedor</label><br>
+                <input type="text" name="fornecedor" required>
+            </div>
+
+            <div>
+                <label style="font-weight:700;">Produto</label><br>
+                <select name="produto_id" required>
+                    <option value="">Selecione</option>
+                    {% for produto in produtos %}
+                        <option value="{{ produto.id }}">
+                            {{ produto.nome }} | {{ produto.tipo }} | Estoque atual: {{ "%.2f"|format(produto.estoque or 0) }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label style="font-weight:700;">Quantidade</label><br>
+                <input type="number" step="0.01" name="quantidade" required>
+            </div>
+
+            <div>
+                <label style="font-weight:700;">Custo Unitário</label><br>
+                <input type="number" step="0.01" name="custo_unitario" required>
+            </div>
+
+            <div style="grid-column: span 2;">
+                <label style="font-weight:700;">Observação</label><br>
+                <input type="text" name="observacao">
+            </div>
+
+        </div>
+
+        <div style="margin-top:24px;">
+            <button type="submit" class="btn" style="font-size:18px; padding:14px 22px;">
+                Salvar Compra
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

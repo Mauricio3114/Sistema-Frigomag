@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cupom da Venda #{{ venda.id }}</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .acoes {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .acoes button,
+        .acoes a {
+            display: inline-block;
+            margin: 0 6px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            background: #7B1E3A;
+            color: #fff;
+        }
+
+        .acoes a {
+            background: #6b7280;
+        }
+
+        .cupom {
+            width: 320px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 18px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            color: #000;
+        }
+
+        .centro {
+            text-align: center;
+        }
+
+        .titulo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .linha {
+            border-top: 1px dashed #000;
+            margin: 10px 0;
+        }
+
+        .item {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .item-topo {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        .item-baixo {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .totais {
+            font-size: 16px;
+        }
+
+        .totais .linha-total {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+        }
+
+        .grande {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+            }
+
+            .acoes {
+                display: none;
+            }
+
+            .cupom {
+                box-shadow: none;
+                width: 100%;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="acoes">
+        <button onclick="window.print()">Imprimir</button>
+        <a href="/vendas/">Nova venda</a>
+        <a href="/vendas/listar">Histórico</a>
+    </div>
+
+    <div class="cupom">
+        <div class="centro">
+            <div class="titulo">FRIGOMAG</div>
+            <div>Cupom não fiscal</div>
+            <div>Venda #{{ venda.id }}</div>
+            <div>{{ venda.criado_em.strftime("%d/%m/%Y %H:%M") if venda.criado_em else "-" }}</div>
+        </div>
+
+        <div class="linha"></div>
+
+        {% for item in venda.itens %}
+        <div class="item">
+            <div class="item-topo">
+                <span>{{ item.produto.nome if item.produto else "Produto" }}</span>
+                <span>R$ {{ "%.2f"|format(item.subtotal) }}</span>
+            </div>
+            <div class="item-baixo">
+                <span>Qtd: {{ "%.3f"|format(item.quantidade) }}</span>
+                <span>Unit: R$ {{ "%.2f"|format(item.preco_unitario) }}</span>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="linha"></div>
+
+        <div class="totais">
+            <div class="linha-total grande">
+                <span>TOTAL</span>
+                <span>R$ {{ "%.2f"|format(venda.total) }}</span>
+            </div>
+
+            <div class="linha-total">
+                <span>Pagamento</span>
+                <span>{{ venda.forma_pagamento or "-" }}</span>
+            </div>
+        </div>
+
+        <div class="linha"></div>
+
+        <div class="centro">
+            <div>Obrigado pela preferência!</div>
+            <div>Frigomag</div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Compras{% endblock %}
+
+{% block content %}
+
+<div class="card" style="padding: 24px 26px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;">
+        <div>
+            <h1 class="page-title" style="font-size:32px; margin:0 0 6px 0;">Compras</h1>
+            <p class="page-subtitle" style="font-size:16px; margin:0;">
+                Entradas de mercadoria lançadas no sistema.
+            </p>
+        </div>
+
+        <a href="/compras/nova" class="btn">+ Nova Compra</a>
+    </div>
+</div>
+
+<div class="card" style="padding: 24px;">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Fornecedor</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Custo Unitário</th>
+            <th>Total</th>
+            <th>Data</th>
+        </tr>
+
+        {% for compra in compras %}
+        <tr>
+            <td>{{ compra.id }}</td>
+            <td>{{ compra.fornecedor }}</td>
+            <td>{{ compra.produto.nome if compra.produto else "-" }}</td>
+            <td>{{ "%.2f"|format(compra.quantidade) }}</td>
+            <td>R$ {{ "%.2f"|format(compra.custo_unitario) }}</td>
+            <td style="font-weight:700;">R$ {{ "%.2f"|format(compra.valor_total) }}</td>
+            <td>{{ compra.criado_em.strftime("%d/%m/%Y %H:%M") if compra.criado_em else "-" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

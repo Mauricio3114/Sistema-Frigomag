@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Estoque Baixo{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <h1 class="page-title">Estoque Baixo</h1>
+    <p class="page-subtitle">Produtos com quantidade igual ou abaixo de 3.</p>
+</div>
+
+<div class="card">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Produto</th>
+            <th>Código</th>
+            <th>Tipo</th>
+            <th>Preço</th>
+            <th>Estoque Atual</th>
+            <th>Status</th>
+        </tr>
+
+        {% for produto in produtos %}
+        <tr>
+            <td>{{ produto.id }}</td>
+            <td><strong>{{ produto.nome }}</strong></td>
+            <td>{{ produto.codigo or "-" }}</td>
+            <td>{{ produto.tipo }}</td>
+            <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+            <td>{{ "%.3f"|format(produto.estoque or 0) }}</td>
+            <td>
+                {% if (produto.estoque or 0) <= 0 %}
+                    <span style="background:#dc2626; color:white; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:bold;">
+                        Sem Estoque
+                    </span>
+                {% else %}
+                    <span style="background:#f59e0b; color:white; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:bold;">
+                        Estoque Baixo
+                    </span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

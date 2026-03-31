@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Estoque{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <h1 class="page-title">Estoque</h1>
+    <p class="page-subtitle">Controle atual dos produtos cadastrados.</p>
+</div>
+
+<div class="card">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Produto</th>
+            <th>Código</th>
+            <th>Tipo</th>
+            <th>Preço</th>
+            <th>Estoque Atual</th>
+            <th>Status</th>
+            <th>Ação</th>
+        </tr>
+
+        {% for produto in produtos %}
+        <tr>
+            <td>{{ produto.id }}</td>
+            <td>{{ produto.nome }}</td>
+            <td>{{ produto.codigo or "-" }}</td>
+            <td>{{ produto.tipo }}</td>
+            <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+            <td>{{ "%.3f"|format(produto.estoque or 0) }}</td>
+
+            <td>
+                {% if (produto.estoque or 0) <= 0 %}
+                    <span style="background:#dc2626; color:white; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:bold;">
+                        Sem Estoque
+                    </span>
+                {% elif (produto.estoque or 0) <= 3 %}
+                    <span style="background:#f59e0b; color:white; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:bold;">
+                        Estoque Baixo
+                    </span>
+                {% else %}
+                    <span style="background:#16a34a; color:white; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:bold;">
+                        Normal
+                    </span>
+                {% endif %}
+            </td>
+
+            <td>
+                <a href="/estoque/ajustar/{{ produto.id }}" class="btn" style="padding:6px 10px;">
+                    Ajustar
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

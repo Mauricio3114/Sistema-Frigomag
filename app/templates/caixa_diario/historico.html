@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Histórico de Caixa{% endblock %}
+
+{% block content %}
+
+<div class="card" style="padding: 24px 26px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+
+        <div>
+            <h1 class="page-title" style="font-size:32px;">Histórico de Caixas</h1>
+            <p class="page-subtitle">Controle dos caixas abertos e fechados.</p>
+        </div>
+
+        <a href="/caixa-diario/" class="btn">Voltar</a>
+
+    </div>
+</div>
+
+<div class="card" style="margin-top:20px;">
+    <table>
+
+        <tr>
+            <th>Data</th>
+            <th>Abertura</th>
+            <th>Fechamento</th>
+            <th>Vendas</th>
+            <th>Diferença</th>
+            <th>Status</th>
+            <th>Ação</th>
+        </tr>
+
+        {% for c in caixas %}
+        <tr>
+            <td>{{ c.data.strftime("%d/%m/%Y") }}</td>
+
+            <td>R$ {{ "%.2f"|format(c.valor_abertura or 0) }}</td>
+
+            <td>
+                {% if c.valor_fechamento %}
+                    R$ {{ "%.2f"|format(c.valor_fechamento) }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+
+            <td>R$ {{ "%.2f"|format(c.total_vendas or 0) }}</td>
+
+            <td>
+                <strong style="color:{% if c.diferenca < 0 %}red{% else %}green{% endif %}">
+                    R$ {{ "%.2f"|format(c.diferenca or 0) }}
+                </strong>
+            </td>
+
+            <td>
+                {% if c.status == "aberto" %}
+                    <span style="color:#16a34a; font-weight:bold;">ABERTO</span>
+                {% else %}
+                    <span style="color:#dc2626; font-weight:bold;">FECHADO</span>
+                {% endif %}
+            </td>
+
+            <td>
+                <a href="/caixa-diario/{{ c.id }}" class="btn" style="padding:6px 10px;">
+                    Ver Detalhes
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+</div>
+
+{% endblock %}

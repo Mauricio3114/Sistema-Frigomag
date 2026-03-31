@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+    <h1 class="page-title">Ajustar Estoque</h1>
+    <p class="page-subtitle">{{ produto.nome }}</p>
+</div>
+
+<div class="card">
+    <form method="POST">
+
+        <p>
+            <label>Tipo</label><br>
+            <select name="tipo">
+                <option value="entrada">Entrada</option>
+                <option value="saida">Saída</option>
+            </select>
+        </p>
+
+        <p>
+            <label>Quantidade</label><br>
+            <input type="number" step="0.001" name="quantidade">
+        </p>
+
+        <button type="submit" class="btn">Salvar</button>
+    </form>
+</div>
+
+<div style="margin-top: 15px;">
+    <a href="/estoque/" class="btn">Voltar</a>
+</div>
+
+{% endblock %}

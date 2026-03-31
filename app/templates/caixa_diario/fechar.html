@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Fechar Caixa{% endblock %}
+
+{% block content %}
+
+<div class="card" style="padding: 24px 26px;">
+    <h1 class="page-title" style="font-size:32px; margin:0 0 6px 0;">Fechar Caixa</h1>
+    <p class="page-subtitle" style="font-size:16px; margin:0;">
+        Confira o valor esperado e informe o dinheiro físico do fechamento.
+    </p>
+</div>
+
+<div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; margin-bottom:20px;">
+
+    <div class="card" style="border-top:5px solid #2563eb; padding:22px;">
+        <div style="font-size:14px; color:#777; font-weight:700; text-transform:uppercase;">Abertura</div>
+        <div style="font-size:30px; font-weight:900; margin-top:14px; color:#2563eb;">
+            R$ {{ "%.2f"|format(caixa.valor_abertura or 0) }}
+        </div>
+    </div>
+
+    <div class="card" style="border-top:5px solid #16a34a; padding:22px;">
+        <div style="font-size:14px; color:#777; font-weight:700; text-transform:uppercase;">Dinheiro no Dia</div>
+        <div style="font-size:30px; font-weight:900; margin-top:14px; color:#16a34a;">
+            R$ {{ "%.2f"|format(total_dinheiro or 0) }}
+        </div>
+    </div>
+
+    <div class="card" style="border-top:5px solid #7B1E3A; padding:22px;">
+        <div style="font-size:14px; color:#777; font-weight:700; text-transform:uppercase;">Esperado no Caixa</div>
+        <div style="font-size:30px; font-weight:900; margin-top:14px; color:#7B1E3A;">
+            R$ {{ "%.2f"|format(esperado or 0) }}
+        </div>
+    </div>
+
+</div>
+
+<div class="card" style="padding:26px;">
+    <form method="POST" style="max-width:460px;">
+        <label style="font-weight:700;">Valor Encontrado no Caixa</label>
+        <input type="number" step="0.01" name="valor_fechamento" required style="margin-top:8px;">
+
+        <div style="margin-top:20px;">
+            <button type="submit" class="btn" style="background:#dc2626;">Confirmar Fechamento</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhe da Venda{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <h1 class="page-title">Detalhe da Venda #{{ venda.id }}</h1>
+    <p class="page-subtitle">Confira os itens lançados nessa venda.</p>
+</div>
+
+<div class="card">
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
+        <div>
+            <strong>Total da Venda</strong><br>
+            <span style="font-size: 28px; color: #7B1E3A; font-weight: bold;">
+                R$ {{ "%.2f"|format(venda.total) }}
+            </span>
+        </div>
+
+        <div>
+            <strong>Forma de Pagamento</strong><br>
+            <span style="font-size: 20px;">
+                {{ venda.forma_pagamento or "-" }}
+            </span>
+        </div>
+
+        <div>
+            <strong>Data</strong><br>
+            <span style="font-size: 20px;">
+                {{ venda.criado_em.strftime("%d/%m/%Y %H:%M") if venda.criado_em else "-" }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="page-title">Itens da Venda</h2>
+
+    <table>
+        <tr>
+            <th>Produto</th>
+            <th>Quantidade / Peso</th>
+            <th>Preço Unitário</th>
+            <th>Subtotal</th>
+        </tr>
+
+        {% for item in venda.itens %}
+        <tr>
+            <td>{{ item.produto.nome if item.produto else "-" }}</td>
+            <td>{{ "%.3f"|format(item.quantidade) }}</td>
+            <td>R$ {{ "%.2f"|format(item.preco_unitario) }}</td>
+            <td>R$ {{ "%.2f"|format(item.subtotal) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div style="margin-top: 15px;">
+    <a href="/vendas/listar" class="btn">Voltar para Vendas</a>
+</div>
+
+{% endblock %}
